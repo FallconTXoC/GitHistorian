@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@xyflow/react/dist/style.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+
+  --color-add: var(--add);
+  --color-del: var(--del);
+
+  --color-incoming: var(--incoming);
+  --color-outgoing: var(--outgoing);
+
+  --color-branch-main: var(--branch-main);
+  --color-branch-refactor: var(--branch-refactor);
+  --color-branch-feature: var(--branch-feature);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Base — restrained deep-slate developer surface */
+  --background: oklch(0.17 0.012 260);
+  --foreground: oklch(0.95 0.006 260);
+
+  --surface: oklch(0.205 0.013 260);
+  --surface-2: oklch(0.245 0.015 260);
+
+  --card: oklch(0.205 0.013 260);
+  --card-foreground: oklch(0.95 0.006 260);
+  --popover: oklch(0.205 0.014 260);
+  --popover-foreground: oklch(0.95 0.006 260);
+
+  --primary: oklch(0.78 0.12 205);
+  --primary-foreground: oklch(0.19 0.02 240);
+
+  --secondary: oklch(0.26 0.014 260);
+  --secondary-foreground: oklch(0.95 0.006 260);
+
+  --muted: oklch(0.26 0.014 260);
+  --muted-foreground: oklch(0.68 0.018 260);
+
+  --accent: oklch(0.28 0.02 250);
+  --accent-foreground: oklch(0.96 0.006 260);
+
+  --destructive: oklch(0.63 0.2 25);
+
+  --border: oklch(0.32 0.015 260);
+  --input: oklch(0.32 0.015 260);
+  --ring: oklch(0.78 0.12 205);
+
+  /* Diff */
+  --add: oklch(0.72 0.15 150);
+  --del: oklch(0.66 0.2 20);
+
+  /* Flow */
+  --incoming: oklch(64.228% 0.24995 313.695);
+  --outgoing: oklch(0.78 0.12 205);
+
+  /* Branch identity — semantic data encodings */
+  --branch-main: oklch(0.76 0.13 210);
+  --branch-refactor: oklch(0.8 0.14 75);
+  --branch-feature: oklch(0.72 0.16 305);
+
+  --radius: 0.7rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'ss01', 'cv01';
+  }
+}
+
+/* React Flow surface theming */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__background {
+  background-color: var(--background);
+}
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+.react-flow__edge-path {
+  transition: stroke 0.2s ease, opacity 0.2s ease, stroke-width 0.2s ease;
+}
+.react-flow__node {
+  transition: opacity 0.25s ease;
+}
+
+/* .react-flow__controls {
+  top: 0 !important;
+  right: 0 !important;
+  left: auto !important;
+  bottom: auto !important;
+} */
+
+/* commit "you are here" ring on the timeline */
+@keyframes gh-pulse-ring {
+  0% {
+    stroke-opacity: 0.9;
+    transform: scale(0.85);
+  }
+  70% {
+    stroke-opacity: 0;
+    transform: scale(1.4);
+  }
+  100% {
+    stroke-opacity: 0;
+    transform: scale(1.4);
+  }
+}
+.animate-pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: gh-pulse-ring 1.8s ease-out infinite;
+}
+
+/* Thin, quiet scrollbars for panels */
+.gh-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.gh-scroll::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+.gh-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+.gh-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
