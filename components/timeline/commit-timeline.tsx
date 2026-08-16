@@ -13,7 +13,7 @@ const LANE_GAP = 36
 
 export function CommitTimeline() {
   const [open, setOpen] = useState(true)
-  const { model, selectedSha, selectCommit, hovered, setHovered, openDiff } =
+  const { model, selectedSha, selectCommit, hoveredCommit, setHoveredCommit, openDiff } =
     useWorkspace()
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -61,6 +61,9 @@ export function CommitTimeline() {
     }
     return tips
   }, [model.branches])
+
+  const detailCommit =
+  hoveredCommit && bySha.has(hoveredCommit) ? hoveredCommit : selectedSha
 
   return (
     <div className="flex h-full flex-col">
@@ -142,7 +145,7 @@ export function CommitTimeline() {
               const x = xOf(c.sha)
               const y = yOf(c.branch)
               const selected = c.sha === selectedSha
-              const isHover = c.sha === hovered
+              const isHover = c.sha === hoveredCommit
               const isMerge = c.parents.length > 1
               return (
                 <g
@@ -151,8 +154,8 @@ export function CommitTimeline() {
                   className="cursor-pointer"
                   onClick={() => selectCommit(c.sha)}
                   onDoubleClick={() => openDiff({ kind: 'commit', sha: c.sha })}
-                  onMouseEnter={() => setHovered(c.sha)}
-                  onMouseLeave={() => setHovered(null)}
+                  onMouseEnter={() => setHoveredCommit(c.sha)}
+                  onMouseLeave={() => setHoveredCommit(null)}
                 >
                   {selected && (
                     <circle
@@ -228,7 +231,7 @@ export function CommitTimeline() {
           </svg>
         </div>
 
-        <TimelineDetail commit={bySha.get(hovered ?? selectedSha)} />
+        <TimelineDetail commit={bySha.get(detailCommit)} />
       </div>
       )}
     </div>

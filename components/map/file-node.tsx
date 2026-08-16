@@ -17,6 +17,7 @@ export interface FileNodeData {
   dimmed: boolean
   selected: boolean
   multiBranch: boolean
+  status: FileStatus
   [key: string]: unknown
 }
 
@@ -34,26 +35,35 @@ function FileNodeImpl({ data }: { data: FileNodeData }) {
     dimmed,
     selected,
     multiBranch,
+    status,
   } = data
 
+  const borderColor =
+    status === 'deleted'
+      ? 'var(--del)'
+      : status === 'added'
+        ? 'var(--add)'
+        : branchColor
+
   // recency drives how vivid the card reads
-  const cardOpacity = dimmed ? 0.24 : 0.6 + intensity * 0.4
+  const cardOpacity =
+    dimmed ? 0.24 : status === 'deleted' ? 0.33 : 0.35 + intensity * 0.65
 
   return (
     <div
       className="group relative h-full w-full rounded-md border bg-card transition-all duration-200"
       style={{
         opacity: cardOpacity,
-        borderColor: selected
-          ? branchColor
+        borderColor: borderColor,
+        borderStyle: status === 'deleted' ? 'dashed' : 'solid',
+        boxShadow:
+        status === 'deleted' ? `none` :
+        selected
+          ? `0 0 0 1.5px ${borderColor}, 0 8px 24px -8px ${borderColor}`
           : impacted
-            ? branchColor
-            : 'var(--border)',
-        boxShadow: selected
-          ? `0 0 0 1.5px ${branchColor}, 0 8px 24px -8px ${branchColor}`
-          : impacted
-            ? `0 0 0 1px ${branchColor}, 0 0 18px -4px ${branchColor}`
+            ? `0 0 0 1px ${borderColor}, 0 0 18px -4px ${borderColor}`
             : 'none',
+        overflow: 'hidden',
       }}
     >
       <Handle type="target" position={Position.Top} isConnectable={false} />
@@ -63,7 +73,7 @@ function FileNodeImpl({ data }: { data: FileNodeData }) {
       <span
         aria-hidden
         className="absolute left-0 top-0 h-full w-[3px] rounded-l-md"
-        style={{ backgroundColor: branchColor, opacity: 0.35 + intensity * 0.65 }}
+        style={{ backgroundColor: borderColor, opacity: 0.35 + intensity * 0.65 }}
       />
 
       <div className="flex h-full flex-col justify-between p-2 pl-3">
@@ -77,9 +87,15 @@ function FileNodeImpl({ data }: { data: FileNodeData }) {
               {name}
             </span>
           </div>
-          <span className="shrink-0 rounded-sm bg-muted px-1 text-[9px] font-medium uppercase tracking-wide text-muted-foreground">
-            {lang}
-          </span>
+          {(status === 'deleted' || status === 'added') && (
+            <span
+              className={`shrink-0 rounded-sm px-1 text-[9px] font-medium uppercase tracking-wide text-accent-foreground ${
+                status === 'deleted' ? 'bg-del' : 'bg-add-darker'
+              }`}
+            >
+              {status === 'deleted' ? '-' : '+'}
+            </span>
+          )}
         </div>
 
         <div>

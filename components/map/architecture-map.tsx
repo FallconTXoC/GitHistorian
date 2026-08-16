@@ -121,6 +121,7 @@ function MapInner() {
     select,
     setHovered,
     search,
+    selectedSha,
   } = useWorkspace()
   const { fitView } = useReactFlow()
   const [collapsedModules, setCollapsedModules] = useState<Set<string>>(
@@ -167,6 +168,19 @@ function MapInner() {
     for (const [path, st] of fileStates) if (st.exists) s.add(path)
     return s
   }, [fileStates])
+
+  const isImmediateChange = (st) =>
+    !!st &&
+    st.lastCommit?.sha === selectedSha &&
+    (st.status === 'added' || st.status === 'deleted')
+
+  const visibleSet = useMemo(() => {
+    const s = new Set<string>()
+    for (const [path, st] of fileStates) {
+      if (st.exists || isImmediateChange(st)) s.add(path)
+    }
+    return s
+  }, [fileStates, isImmediateChange])
 
   const maxChurn = useMemo(() => {
     let m = 0
@@ -291,9 +305,10 @@ function MapInner() {
 
     for (const [path, slot] of layout.files) {
       const st = fileStates.get(path)
-      if (!st || !st.exists) continue
+      if (!st || (!st.exists && !isImmediateChange(st))) continue
       if (!visiblePaths.has(path)) continue
       if (!moduleAgg.has(slot.parentId)) continue
+
       const inFocus = !focus.active || focus.set.has(path)
       out.push({
         id: `file:${path}`,
@@ -318,6 +333,7 @@ function MapInner() {
           dimmed: !inFocus,
           selected: selection?.kind === 'file' && selection.path === path,
           multiBranch: st.reachableFrom.length > 1,
+          status: st.status,
         } satisfies FileNodeData,
       })
     }
@@ -369,14 +385,18 @@ function MapInner() {
     const out: Edge[] = []
 
     for (const d of model.dependencies) {
+      const sourceExists = fileStates.get(d.source)?.exists ?? false
+      const targetExists = fileStates.get(d.target)?.exists ?? false
+
       if (
-        !existingSet.has(d.source) ||
-        !existingSet.has(d.target) ||
+        !sourceExists ||
+        !targetExists ||
         !visiblePaths.has(d.source) ||
         !visiblePaths.has(d.target)
       ) {
         continue
       }
+
 
       const inFocus =
         focus.active && focus.set.has(d.source) && focus.set.has(d.target)

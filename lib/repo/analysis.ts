@@ -93,29 +93,25 @@ export function churnWeight(churn: number, maxChurn: number): number {
 
 // Palette for branches beyond the three built-in demo branches.
 const DYNAMIC_BRANCH_VARS = [
-  'var(--branch-main)',
-  'var(--branch-refactor)',
-  'var(--branch-feature)',
+  'var(--branch-0)',
+  'var(--branch-1)',
+  'var(--branch-2)',
+  'var(--branch-3)',
+  'var(--branch-4)',
+  'var(--branch-5)',
+  'var(--branch-6)',
+  'var(--branch-7)',
 ]
 
 export function branchColorVar(branch: BranchId | null): string {
-  switch (branch) {
-    case 'main':
-      return 'var(--branch-main)'
-    case 'refactor':
-      return 'var(--branch-refactor)'
-    case 'feature/payments':
-      return 'var(--branch-feature)'
-    case null:
-    case undefined:
-      return 'var(--muted-foreground)'
-    default: {
-      // Deterministic colour for arbitrary (loaded-project) branch ids.
-      let h = 0
-      for (let i = 0; i < branch.length; i++) h = (h * 31 + branch.charCodeAt(i)) >>> 0
-      return DYNAMIC_BRANCH_VARS[h % DYNAMIC_BRANCH_VARS.length]
-    }
+  if (!branch) return 'var(--muted-foreground)'
+
+  let hash = 0
+  for (let i = 0; i < branch.length; i++) {
+    hash = (hash * 31 + branch.charCodeAt(i)) >>> 0
   }
+
+  return DYNAMIC_BRANCH_VARS[hash % DYNAMIC_BRANCH_VARS.length]
 }
 
 export function branchShortLabel(branch: BranchId | null): string {
@@ -220,13 +216,13 @@ export function createRepoIndex(model: RepoModel): RepoIndex {
       for (const c of commits) {
         const ch = c.changes.find((x) => x.path === path || x.from === path)
         if (!ch) continue
+
         commitCount++
-        churn += ch.additions + ch.deletions
         additions += ch.additions
         deletions += ch.deletions
+        churn += additions + deletions
         lastCommit = c
         status = ch.status
-
 
         if (ch.status === 'added' || ch.status === 'renamed') {
           exists = true
@@ -239,6 +235,14 @@ export function createRepoIndex(model: RepoModel): RepoIndex {
       }
 
       if (commitCount === 0) continue
+
+      if (
+        lastCommit &&
+        lastCommit.sha !== selectedSha &&
+        (status === 'added' || status === 'deleted' || status === 'renamed')
+      ) {
+        status = 'modified'
+      }
 
       const lastChangedAt = lastCommit?.timestamp ?? null
       const ageDays = lastChangedAt

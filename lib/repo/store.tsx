@@ -47,6 +47,9 @@ interface WorkspaceValue {
   hovered: string | null
   setHovered: (path: string | null) => void
 
+  hoveredCommit: string | null
+  setHoveredCommit: (sha: string | null) => void
+
   diff: DiffTarget
   openDiff: (t: DiffTarget) => void
   closeDiff: () => void

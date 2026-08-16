@@ -28,6 +28,7 @@
   --color-surface-2: var(--surface-2);
 
   --color-add: var(--add);
+  --color-add-darker: var(--add-darker);
   --color-del: var(--del);
 
   --color-incoming: var(--incoming);
@@ -81,6 +82,7 @@
 
   /* Diff */
   --add: oklch(0.72 0.15 150);
+  --add-darker: oklch(0.66 0.2 150);
   --del: oklch(0.66 0.2 20);
 
   /* Flow */
@@ -91,6 +93,14 @@
   --branch-main: oklch(0.76 0.13 210);
   --branch-refactor: oklch(0.8 0.14 75);
   --branch-feature: oklch(0.72 0.16 305);
+
+  --branch-0: oklch(58.01% 0.17559 253.365);
+  --branch-1: oklch(67.558% 0.14997 281.625);
+  --branch-2: oklch(0.72 0.14 85);
+  --branch-3: oklch(0.74 0.12 345);
+  --branch-4: oklch(78.584% 0.1367 107.305);
+  --branch-5: oklch(0.78 0.11 270);
+  --branch-6: oklch(88.404% 0.08763 187.671);
 
   --radius: 0.7rem;
 }
