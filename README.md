@@ -10,6 +10,7 @@ An interactive spatial map of your codebase where Git history comes alive. Visua
 - **Temporal Analysis** - Watch how your architecture evolves over time
 - **Branch Topology** - Explore parallel development and merge patterns
 - **Interactive Exploration** - Zoom, pan, and drill down into specific files and commits
+- **See Interaction Flows** - View dependencies and imports in your project evolve over time (Currently only JS based languages and Python are supported)
 
 ## Quick Start
 
